@@ -1,0 +1,25 @@
+﻿@model DogusTeknoloji_BlogApp.Core.Entities.Category
+
+
+
+<h1>Delete Category</h1>
+
+<div class="alert alert-danger">
+    <h3>Are you sure you want to delete this category?</h3>
+</div>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
+        
+        <dt class="col-sm-2">Name</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+    </dl>
+    
+    <form asp-action="Delete" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>

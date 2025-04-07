@@ -12,16 +12,14 @@ namespace DogusTeknoloji_BlogApp.Infrastructure.Repositories
 {
     public class PostRepository : RepositoryBase<Post, int>, IPostRepository
     {
-        private readonly AppDbContext _context;
-
+        
         public PostRepository(AppDbContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task<List<Post>> GetPostsByCategoryIdAsync(int categoryId)
         {
-            return await _context.Posts.Where(p => p.CategoryId == categoryId).ToListAsync();
+            return await _dbSet.Where(p => p.CategoryId == categoryId).ToListAsync();
         }
     }
 }

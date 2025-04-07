@@ -12,15 +12,13 @@ namespace DogusTeknoloji_BlogApp.Infrastructure.Repositories
 {
     public class CommentRepository : RepositoryBase<Comment, int>, ICommentRepository
     {
-        private readonly AppDbContext _context;
         public CommentRepository(AppDbContext context) : base(context)
         {
-            _context = context;
         }
 
-        public Task<List<Comment>> GetCommentsByPostIdAsync(int postId)
+        public async Task<List<Comment>> GetCommentsByPostIdAsync(int postId)
         {
-            return _context.Comments.Where(c => c.PostId == postId).ToListAsync();
+            return await _dbSet.Where(c=>c.PostId==postId).ToListAsync();
         }
     }
 }

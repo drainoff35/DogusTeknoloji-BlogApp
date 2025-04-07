@@ -1,4 +1,5 @@
-﻿using DogusTeknoloji_BlogApp.Core.Interfaces.Repositories;
+﻿using DogusTeknoloji_BlogApp.Core.Entities;
+using DogusTeknoloji_BlogApp.Core.Interfaces.Repositories;
 using DogusTeknoloji_BlogApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace DogusTeknoloji_BlogApp.Infrastructure.Repositories
 {
-    public class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey> where TEntity : class
+    public class RepositoryBase<TEntity, TKey> : IRepositoryBase<TEntity, TKey> where TEntity : BaseEntity
     {
-        private readonly AppDbContext _context;
-        private readonly DbSet<TEntity> _dbSet;
+        protected readonly AppDbContext _context;
+        protected readonly DbSet<TEntity> _dbSet;
 
         public RepositoryBase(AppDbContext context)
         {

@@ -27,10 +27,7 @@ namespace DogusTeknoloji_BlogApp.Infrastructure.Data
                 entity.Property(e => e.Title).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.Content).HasMaxLength(1000).IsRequired();
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
-                entity.HasOne(p => p.User)
-              .WithMany(u => u.Posts)
-              .HasForeignKey(p => p.UserId)
-              .OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(p => p.User).WithMany(u => u.Posts).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<Comment>(entity =>
@@ -44,7 +41,7 @@ namespace DogusTeknoloji_BlogApp.Infrastructure.Data
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name).HasMaxLength(10).IsRequired();
+                entity.Property(e => e.Name).HasMaxLength(40).IsRequired();
             });
 
             base.OnModelCreating(modelBuilder);

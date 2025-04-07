@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace DogusTeknoloji_BlogApp.Core.Entities
 {
-    public class Comment
+    public class Comment : BaseEntity
     {
-        public int Id { get; set; }
         public string Text { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public int PostId { get; set; }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace DogusTeknoloji_BlogApp.Core.Entities
 {
-    public class Category : BaseEntity
+    public class BaseEntity
     {
-        public string Name { get; set; } = null!;
-        public List<Post>? Posts { get; set; }
+        public int Id { get; set; }
     }
 }
