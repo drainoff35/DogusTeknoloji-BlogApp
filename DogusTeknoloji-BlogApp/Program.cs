@@ -18,7 +18,7 @@ builder.Services.AddControllersWithViews();
 
 
 
-builder.Services.AddDbContext<AppDbContext>(opt=>
+builder.Services.AddDbContext<AppDbContext>(opt =>
 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -38,6 +38,8 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 8;
 })
     .AddEntityFrameworkStores<AppDbContext>();
 

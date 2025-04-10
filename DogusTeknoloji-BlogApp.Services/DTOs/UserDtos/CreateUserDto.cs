@@ -14,8 +14,13 @@ namespace DogusTeknoloji_BlogApp.Services.DTOs.UserDtos
         public DateTime RegisterDate { get; set; }
 
         [Required(ErrorMessage = "Email boş bırakılamaz.")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
         public string Email { get; set; } = null!;
+
         [Required(ErrorMessage = "Şifre boş bırakılamaz.")]
+        [StringLength(50, ErrorMessage = "Şifre en az 8 karakter olmalıdır.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
+        ErrorMessage = "Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.")]
         public string Password { get; set; } = null!;
     }
 }

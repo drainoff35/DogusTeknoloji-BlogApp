@@ -14,11 +14,11 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">@post.Title</h5>
+                        <h5 class="card-title">Başlık: @post.Title</h5>
                         <h6 class="card-subtitle mb-2 text-muted">Kategori: @post.Category.Name</h6>
                         <p class="card-text">@(post.Content.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content)</p>
-                        <p class="card-text"><small class="text-muted">Eklenme Tarihi: @post.CreatedAt.ToString("dd/MM/yyyy")</small></p>
-                        <p class="card-text"><small class="text-muted">Yazar: @post.User.UserName</small></p>
+                        <p class="card-text"><small class="text-muted">Eklenme Tarihi: @post.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small></p>
+                        <p class="card-text"><small class="text-muted">Yazar:<strong> @post.User.UserName</strong></small></p>
                     </div>
                     <div class="card-footer">
                         <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-sm btn-info">Detaylar</a>

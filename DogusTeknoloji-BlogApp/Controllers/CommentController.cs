@@ -55,6 +55,7 @@ namespace DogusTeknoloji_BlogApp.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -62,30 +63,31 @@ namespace DogusTeknoloji_BlogApp.Controllers
                 var comment = await _commentService.GetByIdAsync(id);
                 var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
+                Console.WriteLine($"Comment UserId: {comment.UserId}");
+                Console.WriteLine($"Current UserId: {userId}");
+
                 // Sadece kendi yorumunu silebilsin
                 if (comment.UserId != userId)
                 {
-                    TempData["ErrorMessage"] = "Bu yorumu silmek için yetkiniz yok.";
-                    return RedirectToAction("Details", "Post", new { id = comment.PostId });
+                    return Json(new { success = false, message = "Bu yorumu silmek için yetkiniz yok." });
                 }
 
                 int postId = comment.PostId;
                 await _commentService.DeleteAsync(id);
                 await _unitOfWork.CommitAsync();
 
-                TempData["SuccessMessage"] = "Yorum başarıyla silindi.";
-                return RedirectToAction("Details", "Post", new { id = postId });
+                return Json(new { success = true, message = "Yorum başarıyla silindi.", postId = postId });
             }
             catch (KeyNotFoundException)
             {
-                return NotFound("Yorum bulunamadı.");
+                return Json(new { success = false, message = "Yorum bulunamadı." });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Yorum silinirken hata oluştu: {ex.Message}";
-                return RedirectToAction("Index", "Post");
+                return Json(new { success = false, message = $"Yorum silinirken hata oluştu: {ex.Message}" });
             }
         }
+
 
         [HttpGet]
         [Authorize]

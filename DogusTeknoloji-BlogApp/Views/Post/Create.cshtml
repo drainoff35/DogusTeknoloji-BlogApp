@@ -1,36 +1,41 @@
 ﻿@model DogusTeknoloji_BlogApp.Services.DTOs.PostDtos.PostCreateDto
 
 
-<h1>Create Post</h1>
+<h1>Yazı Oluştur</h1>
 
 <div class="row">
     <div class="col-md-8">
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group mb-3">
-                <label asp-for="Title" class="control-label"></label>
+                <label asp-for="Title" class="control-label">Başlık</label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="CategoryId" class="control-label">Category</label>
+                <label asp-for="CategoryId" class="control-label">Kategori</label>
                 <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
-                    <option value="">-- Select Category --</option>
+                    <option value="">-- Kategori Seç --</option>
                 </select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Content" class="control-label"></label>
+                <label asp-for="Content" class="control-label">İçerik</label>
                 <textarea asp-for="Content" class="form-control" rows="10"></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
+            <div class="form-group mb-3">
+                <label asp-for="Image" class="control-label"></label>
+                <input asp-for="Image" type="file" class="form-control" accept="image/*" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <button type="submit" class="btn btn-primary">Oluştur</button>
+                <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
             </div>
         </form>
     </div>
@@ -40,7 +45,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        // Zengin metin editörü eklemek isterseniz (örn: TinyMCE) buraya ekleyebilirsiniz
-    </script>
 }

@@ -241,6 +241,21 @@ a {
     color: var(--accent-color);
 }
 
+/* Post resim stili */
+.post-image {
+    max-width: 90%;
+    text-align: center;
+    margin: 1rem auto;
+}
+
+    .post-image img {
+        max-width: 90;
+        max-height: 500px; /* Maksimum yükseklik sýnýrý */
+        object-fit: contain; /* Resim oranlarýný korur */
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+
 /* Hero bölümü */
 .hero-section {
     padding: 4rem 0;
@@ -324,4 +339,5 @@ a {
     .card-header, .card-body, .card-footer {
         padding: 1rem;
     }
+ 
 }

@@ -10,6 +10,7 @@ namespace DogusTeknoloji_BlogApp.Services.DTOs.CommentDtos
     public class CommentUpdateDto
     {
         [Required(ErrorMessage = "Yorum boş bırakılamaz.")]
+        [MaxLength(500, ErrorMessage = "Yorum en fazla 500 karakter olabilir.")]
         public string Text { get; set; } = null!;
     }
 }

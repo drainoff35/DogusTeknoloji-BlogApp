@@ -1,0 +1,21 @@
+﻿@model DogusTeknoloji_BlogApp.Services.DTOs.CommentDtos.CommentDetailDto
+
+<div class="card mb-3 shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="card-subtitle text-muted">@Model.UserName</h6>
+            <small class="text-muted">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+        </div>
+        <p class="card-text">@Model.Text</p>
+        @if (User.Identity.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.UserId.ToString())
+        {
+            <div class="d-flex justify-content-end mt-2">
+                <a asp-controller="Comment" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary me-2">Düzenle</a>
+                <button type="button" class="btn btn-sm btn-outline-danger delete-Comment"
+                        data-id="@Model.Id" data-comment-text="@Model.Text.Substring(0, Math.Min(Model.Text.Length, 30))@(Model.Text.Length > 30 ? "..." : "")">
+                    Sil
+                </button>
+            </div>
+        }
+    </div>
+</div>

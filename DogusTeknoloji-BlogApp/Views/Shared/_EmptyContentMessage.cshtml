@@ -1,0 +1,20 @@
+﻿@model (string Message, string ActionUrl, string ActionText, bool ShowAction, bool IsAuthenticated)
+
+<div class="alert alert-info shadow-sm">
+    <i class="bi bi-info-circle me-2"></i> @Model.Message
+</div>
+
+@if (Model.ShowAction)
+{
+    @if (Model.IsAuthenticated)
+    {
+        <a href="@Model.ActionUrl" class="btn btn-primary mt-3">@Model.ActionText</a>
+    }
+    else
+    {
+        <div class="mt-3">
+            <a asp-controller="User" asp-action="Login" class="btn btn-primary me-2">Giriş Yap</a>
+            <a asp-controller="User" asp-action="Register" class="btn btn-outline-primary">Kayıt Ol</a>
+        </div>
+    }
+}

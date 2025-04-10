@@ -1,0 +1,22 @@
+﻿@model (string Title, string Message, string Id, string ActionUrl, string EntityName)
+
+<div class="modal fade" id="deleteConfirmModal-@Model.EntityName-@Model.Id" tabindex="-1" aria-labelledby="deleteConfirmModalLabel-@Model.EntityName-@Model.Id" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel-@Model.EntityName-@Model.Id">@Model.Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmText-@Model.EntityName-@Model.Id">@Model.Message</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger confirmDeleteBtn-@Model.EntityName"
+                        data-id="@Model.Id" data-url="@Model.ActionUrl" data-entity="@Model.EntityName">
+                    Sil
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

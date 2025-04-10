@@ -56,6 +56,7 @@ namespace DogusTeknoloji_BlogApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(PostCreateDto postDto)
         {
 
@@ -66,6 +67,25 @@ namespace DogusTeknoloji_BlogApp.Controllers
                     var post = _mapper.Map<Post>(postDto);
                     post.CreatedAt = DateTime.Now;
                     post.UserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    if (postDto.Image != null && postDto.Image.Length > 0)
+                    {
+                        string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(postDto.Image.FileName);
+                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "posts");
+
+                        if (!Directory.Exists(uploadsFolder))
+                            Directory.CreateDirectory(uploadsFolder);
+
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await postDto.Image.CopyToAsync(fileStream);
+                        }
+
+                        post.ImagePath = "/images/posts/" + uniqueFileName;
+                    }
+
                     await _postService.AddAsync(post);
                     await _unitOfWork.CommitAsync();
                     TempData["SuccessMessage"] = "Yazı başarıyla oluşturuldu.";
@@ -101,6 +121,7 @@ namespace DogusTeknoloji_BlogApp.Controllers
             }
 
             var postVM = _mapper.Map<PostUpdateDto>(post);
+            postVM.ExistingImagePath = post.ImagePath;
             await PopulateCategoriesDropdownAsync(post.CategoryId);
             return View(postVM);
         }
@@ -124,6 +145,42 @@ namespace DogusTeknoloji_BlogApp.Controllers
                     var post = _mapper.Map<Post>(postDto);
                     post.UserId = originalPost.UserId;
                     post.CreatedAt = originalPost.CreatedAt;
+
+                    if (postDto.Image == null || postDto.Image.Length == 0)
+                    {
+                        post.ImagePath = originalPost.ImagePath;
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(originalPost.ImagePath))
+                        {
+                            var oldImagePath = Path.Combine(
+                                Directory.GetCurrentDirectory(),
+                                "wwwroot",
+                                originalPost.ImagePath.TrimStart('/'));
+
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(postDto.Image.FileName);
+                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "posts");
+
+                        if (!Directory.Exists(uploadsFolder))
+                            Directory.CreateDirectory(uploadsFolder);
+
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await postDto.Image.CopyToAsync(fileStream);
+                        }
+
+                        post.ImagePath = "/images/posts/" + uniqueFileName;
+                    }
+
                     await _postService.UpdateAsync(id, post);
                     await _unitOfWork.CommitAsync();
                     TempData["SuccessMessage"] = "Post başarıyla güncellendi.";
@@ -145,12 +202,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
         {
             try
             {
-                //var post = await _postService.GetByIdAsync(id);
-                //if (post == null)
-                //{
-                //    return Json(new { success = false, message = "Silinecek yazı bulunamadı." });
-                //}
-
                 await _postService.DeleteAsync(id);
                 await _unitOfWork.CommitAsync();
                 return Json(new { success = true, message = "Yazı başarıyla silindi." });

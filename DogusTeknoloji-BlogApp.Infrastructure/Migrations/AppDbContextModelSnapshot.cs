@@ -191,6 +191,9 @@ namespace DogusTeknoloji_BlogApp.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)

@@ -1,7 +1,7 @@
 ﻿@using DogusTeknoloji_BlogApp.Services.DTOs.CategoryDtos
 @model CategoryCreateDto
 
-<h1>Create Category</h1>
+<h1>Kategori Oluştur</h1>
 
 <div class="row">
     <div class="col-md-6">
@@ -9,14 +9,14 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group mb-3">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="control-label">Kategori Adı</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <button type="submit" class="btn btn-primary">Oluştur</button>
+                <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
             </div>
         </form>
     </div>
