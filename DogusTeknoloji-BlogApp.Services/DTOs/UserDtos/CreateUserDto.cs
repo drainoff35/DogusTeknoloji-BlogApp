@@ -18,7 +18,7 @@ namespace DogusTeknoloji_BlogApp.Services.DTOs.UserDtos
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Şifre boş bırakılamaz.")]
-        [StringLength(50, ErrorMessage = "Şifre en az 8 karakter olmalıdır.")]
+        [StringLength(50, MinimumLength = 8, ErrorMessage = "Şifre en az 8 karakter olmalıdır.")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
         ErrorMessage = "Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.")]
         public string Password { get; set; } = null!;

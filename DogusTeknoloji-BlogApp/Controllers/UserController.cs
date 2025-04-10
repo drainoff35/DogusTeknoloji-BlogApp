@@ -21,6 +21,7 @@ namespace DogusTeknoloji_BlogApp.Controllers
             return View();
         }
 
+
         [HttpPost]
         public IActionResult Register(CreateUserDto createUserDto)
         {
@@ -106,6 +107,12 @@ namespace DogusTeknoloji_BlogApp.Controllers
                 TempData["ErrorMessage"] = $"Bir hata oluştu: {ex.Message}";
                 return RedirectToAction("Index", "Home");
             }
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
 
         [HttpPost]
