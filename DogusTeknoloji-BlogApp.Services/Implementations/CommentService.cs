@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace DogusTeknoloji_BlogApp.Services.Implementations
 {
-    public class CategoryService : ServiceBase<Category, int>, ICategoryService
+    public class CommentService : ServiceBase<Comment, int>, ICommentService
     {
-        private readonly ICategoryRepository _categoryRepository;
-        public CategoryService(ICategoryRepository categoryRepository) : base(categoryRepository)
+        private readonly ICommentRepository _commentRepository;
+        public CommentService(ICommentRepository commentRepository) : base(commentRepository)
         {
-            _categoryRepository = categoryRepository;
         }
+
     }
 }

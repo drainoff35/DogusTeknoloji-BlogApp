@@ -1,0 +1,38 @@
+﻿@model DogusTeknoloji_BlogApp.Services.DTOs.CommentDtos.CommentUpdateDto
+
+@{
+    ViewData["Title"] = "Yorum Düzenle";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="mb-4">Yorumu Düzenle</h2>
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <form asp-action="Edit" asp-controller="Comment" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Text" class="form-label">Yorum</label>
+                            <textarea asp-for="Text" class="form-control" rows="4" required></textarea>
+                            <span asp-validation-for="Text" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Post" asp-action="Details" asp-route-id="@ViewBag.PostId" class="btn btn-secondary">İptal</a>
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

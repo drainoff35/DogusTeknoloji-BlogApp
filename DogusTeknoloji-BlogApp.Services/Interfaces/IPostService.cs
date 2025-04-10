@@ -10,5 +10,7 @@ namespace DogusTeknoloji_BlogApp.Services.Interfaces
     public interface IPostService : IServiceBase<Post, int>
     {
         Task<List<Post>> GetPostsByCategoryIdAsync(int categoryId);
+        Task<Post> GetPostWithCommentsAsync(int postId);
+        Task<List<Post>> GetAllWithCategoriesAsync();
     }
 }

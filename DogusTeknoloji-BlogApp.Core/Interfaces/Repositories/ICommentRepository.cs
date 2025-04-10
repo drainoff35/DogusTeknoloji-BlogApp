@@ -9,6 +9,5 @@ namespace DogusTeknoloji_BlogApp.Core.Interfaces.Repositories
 {
     public interface ICommentRepository : IRepositoryBase<Comment, int>
     {
-        Task<List<Comment>> GetCommentsByPostIdAsync(int postId);
     }
 }

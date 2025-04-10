@@ -1,145 +1,121 @@
 ﻿using AutoMapper;
 using DogusTeknoloji_BlogApp.Core.Entities;
 using DogusTeknoloji_BlogApp.Core.Interfaces.UnitOfWork;
-using DogusTeknoloji_BlogApp.Models.ViewModels.CategoryViewModels;
+using DogusTeknoloji_BlogApp.Services.DTOs.CategoryDtos;
 using DogusTeknoloji_BlogApp.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DogusTeknoloji_BlogApp.Controllers
 {
-        public class CategoryController : Controller
+    public class CategoryController : Controller
+    {
+        private readonly ICategoryService _categoryService;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CategoryController(ICategoryService categoryService, IMapper mapper, IUnitOfWork unitOfWork)
         {
-            private readonly ICategoryService _categoryService;
-            private readonly IMapper _mapper;
-            private readonly IUnitOfWork _unitOfWork;
+            _categoryService = categoryService;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+        }
 
-            public CategoryController(ICategoryService categoryService, IMapper mapper, IUnitOfWork unitOfWork)
-            {
-                _categoryService = categoryService;
-                _mapper = mapper;
-                _unitOfWork = unitOfWork;
-            }
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var categories = await _categoryService.GetAllAsync();
+            return View(categories);
+        }
 
-            // GET: Category
-            public async Task<IActionResult> Index()
-            {
-                List<Category> categories = await _categoryService.GetAllAsync();
-                return View(categories);
-            }
+        [HttpGet]
+        [Authorize]
+        public IActionResult Create()
+        {
+            return View();
+        }
 
-
-            // GET: Category/Create
-            public IActionResult Create()
-            {
-                return View();
-            }
-
-            // POST: Category/Create
-            [HttpPost]
-            public async Task<IActionResult> Create(CategoryCreateViewModel categoryVM)
-            {
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        var category = _mapper.Map<Category>(categoryVM);
-                        await _categoryService.AddAsync(category);
-                        await _unitOfWork.CommitAsync();
-                        return RedirectToAction(nameof(Index));
-                    }
-                    catch (Exception ex)
-                    {
-                        ModelState.AddModelError("", $"Something went wrong: {ex.Message}");
-                    }
-                }
-                return View(categoryVM);
-            }
-
-            // GET: Category/Edit/5
-            public async Task<IActionResult> Edit(int id)
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Create(CategoryCreateDto categoryDto)
+        {
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    var category = await _categoryService.GetByIdAsync(id);
-                    if (category == null)
-                    {
-                        return NotFound();
-                    }
-                    var categoryVM = _mapper.Map<CategoryUpdateViewModel>(category);
-                    return View(categoryVM);
-                }
-                catch (KeyNotFoundException)
-                {
-                    return NotFound();
-                }
-            }
-
-            // POST: Category/Edit/5
-            [HttpPost]
-            public async Task<IActionResult> Edit(int id, CategoryUpdateViewModel categoryVM)
-            {
-                if (id != categoryVM.Id)
-                {
-                    return NotFound();
-                }
-
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        var category = _mapper.Map<Category>(categoryVM);
-                        await _categoryService.UpdateAsync(id, category);
-                        await _unitOfWork.CommitAsync();
-                        return RedirectToAction(nameof(Index));
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        return NotFound();
-                    }
-                    catch (Exception ex)
-                    {
-                        ModelState.AddModelError("", $"Something went wrong: {ex.Message}");
-                    }
-                }
-                return View(categoryVM);
-            }
-
-            // GET: Category/Delete/5
-            public async Task<IActionResult> Delete(int id)
-            {
-                try
-                {
-                    var category = await _categoryService.GetByIdAsync(id);
-                    if (category == null)
-                    {
-                        return NotFound();
-                    }
-                    return View(category);
-                }
-                catch (KeyNotFoundException)
-                {
-                    return NotFound();
-                }
-            }
-
-            // POST: Category/Delete/5
-            [HttpPost, ActionName("Delete")]
-            public async Task<IActionResult> DeleteConfirmed(int id)
-            {
-                try
-                {
-                    await _categoryService.DeleteAsync(id);
+                    var category = _mapper.Map<Category>(categoryDto);
+                    await _categoryService.AddAsync(category);
                     await _unitOfWork.CommitAsync();
+                    TempData["SuccessMessage"] = "Kategori başarıyla oluşturuldu.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Bir hata oluştu: {ex.Message}");
+                }
+            }
+            return View(categoryDto);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var category = await _categoryService.GetByIdAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            var categoryDto = _mapper.Map<CategoryUpdateDto>(category);
+            return View(categoryDto);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Edit(int id, CategoryUpdateDto categoryDto)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var category = _mapper.Map<Category>(categoryDto);
+                    await _categoryService.UpdateAsync(id, category);
+                    await _unitOfWork.CommitAsync();
+                    TempData["SuccessMessage"] = "Kategori başarıyla güncellendi.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (KeyNotFoundException)
                 {
-                    return NotFound();
+                    return NotFound("İlgili kategori bulunamadı.");
                 }
                 catch (Exception ex)
                 {
-                    return RedirectToAction(nameof(Delete), new { id, errorMessage = ex.Message });
+                    ModelState.AddModelError("", $"Kategori güncellenirken bir hata oluştu: {ex.Message}");
                 }
             }
+            return View(categoryDto);
         }
- }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _categoryService.DeleteAsync(id);
+                await _unitOfWork.CommitAsync();
+                return Json(new { success = true, message = "Kategori başarıyla silindi." });
+            }
+            catch (KeyNotFoundException)
+            {
+                return Json(new { success = false, message = "Kategori bulunamadı." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+    }
+}

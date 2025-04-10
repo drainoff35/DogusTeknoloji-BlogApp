@@ -9,6 +9,5 @@ namespace DogusTeknoloji_BlogApp.Services.Interfaces
 {
     public interface ICommentService : IServiceBase<Comment, int>
     {
-        Task<List<Comment>> GetCommentsByPostIdAsync(int postId);
     }
 }

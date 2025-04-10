@@ -26,6 +26,11 @@ namespace DogusTeknoloji_BlogApp.Services.Implementations
 
         public async Task DeleteAsync(TKey id)
         {
+            var existingEntity = await _repository.GetByIdAsync(id);
+            if (existingEntity == null)
+            {
+                throw new KeyNotFoundException("Silinecek nesne bulunamadı.");
+            }
             await _repository.DeleteAsync(id);
         }
 
@@ -34,13 +39,23 @@ namespace DogusTeknoloji_BlogApp.Services.Implementations
             return await _repository.GetAllAsync();
         }
 
-        public Task<TEntity> GetByIdAsync(TKey id)
+        public async Task<TEntity> GetByIdAsync(TKey id)
         {
-            return _repository.GetByIdAsync(id);
+            var existingEntity = await _repository.GetByIdAsync(id);
+            if (existingEntity == null)
+            {
+                throw new KeyNotFoundException("Nesne bulunamadı.");
+            }
+            return existingEntity;
         }
 
         public async Task UpdateAsync(TKey id, TEntity entity)
         {
+            var existingEntity = await _repository.GetByIdAsync(id);
+            if (existingEntity == null)
+            {
+                throw new KeyNotFoundException("Güncellenecek nesne bulunamadı.");
+            }
             await _repository.UpdateAsync(id, entity);
         }
     }

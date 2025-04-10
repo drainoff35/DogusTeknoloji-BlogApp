@@ -1,0 +1,100 @@
+﻿@model List<DogusTeknoloji_BlogApp.Core.Entities.Post>
+
+<h1>Yazılar</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Yeni Yazı Ekle</a>
+</p>
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var post in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Kategori: @post.Category.Name</h6>
+                        <p class="card-text">@(post.Content.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content)</p>
+                        <p class="card-text"><small class="text-muted">Eklenme Tarihi: @post.CreatedAt.ToString("dd/MM/yyyy")</small></p>
+                        <p class="card-text"><small class="text-muted">Yazar: @post.User.UserName</small></p>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-sm btn-info">Detaylar</a>
+                        @if (User.Identity.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == post.UserId.ToString())
+                        {
+                            <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-sm btn-primary">Düzenle</a>
+                            <button type="button" class="btn btn-sm btn-danger delete-post"
+                                    data-id="@post.Id" data-title="@post.Title">
+                                Sil
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        Henüz yazı bulunmamaktadır.
+    </div>
+}
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Silme Onayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmText">Bu yazıyı silmek istediğinizden emin misiniz?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            let postIdToDelete = null;
+
+            // Show confirmation modal
+            $('.delete-post').click(function () {
+                postIdToDelete = $(this).data('id');
+                const postTitle = $(this).data('title');
+                $('#deleteConfirmText').text(`"${postTitle}" başlıklı yazıyı silmek istediğinizden emin misiniz?`);
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                deleteModal.show();
+            });
+
+            // Handle delete confirmation
+            $('#confirmDeleteBtn').click(function () {
+                if (postIdToDelete) {
+                    $.ajax({
+                        url: `/Post/Delete/${postIdToDelete}`,
+                        type: 'POST',
+                        success: function (result) {
+                            if (result.success) {
+                                location.reload(); // Reload the page to reflect changes
+                            } else {
+                                alert(result.message);
+                            }
+                        },
+                        error: function () {
+                            alert('Yazı silinirken bir hata oluştu.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

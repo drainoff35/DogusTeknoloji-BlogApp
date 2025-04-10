@@ -1,0 +1,68 @@
+﻿@model DogusTeknoloji_BlogApp.Services.DTOs.UserDtos.UserProfileDto
+
+@{
+    ViewData["Title"] = "Kullanıcı Profili";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header text-center bg-white border-0 pt-4 pb-0">
+                    <div class="mb-3">
+                        <span class="display-1 text-primary">
+                            <i class="bi bi-person-circle"></i>
+                        </span>
+                    </div>
+                    <h3 class="card-title">@Model.UserName</h3>
+                    <p class="text-muted">@Model.Email</p>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+                            <span><i class="bi bi-calendar-check me-2"></i>Kayıt Tarihi</span>
+                            <span class="badge bg-light text-dark rounded-pill">@Model.RegisterDate.ToString("dd MMMM yyyy HH:mm")</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-white border-0 pb-4">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Post" asp-action="Index" class="btn btn-outline-primary">
+                            <i class="bi bi-file-earmark-text me-2"></i>Yazılarım
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white border-0 pt-4 pb-2">
+                    <h4 class="mb-0"><i class="bi bi-info-circle me-2"></i>Profil Bilgileri</h4>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="width: 30%;">Kullanıcı Adı</th>
+                                <td>@Model.UserName</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">E-posta Adresi</th>
+                                <td>@Model.Email</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Toplam Yazı</th>
+                                <td>@Model.PostCount yazı</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Toplam Yorum</th>
+                                <td>@Model.CommentCount yorum</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

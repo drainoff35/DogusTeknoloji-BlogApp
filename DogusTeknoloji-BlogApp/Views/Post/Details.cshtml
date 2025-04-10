@@ -1,0 +1,180 @@
+﻿@model DogusTeknoloji_BlogApp.Services.DTOs.PostDtos.PostDetailDto
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="mb-3">@Model.Title</h1>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between">
+                    <span>Kategori: <strong>@Model.CategoryName</strong></span>
+                    <span>Yazar: <strong>@Model.UserName</strong></span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">@Html.Raw(Model.Content)</p>
+                </div>
+                <div class="card-footer text-muted">
+                    Eklenme Tarihi: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                </div>
+            </div>
+
+            <div class="d-flex mb-4">
+                <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
+                @if (User.Identity.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == Model.Id.ToString())
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary ms-2">Düzenle</a>
+                    <button type="button" class="btn btn-danger ms-2 delete-post"
+                            data-id="@Model.Id" data-title="@Model.Title">
+                        Sil
+                    </button>
+                }
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Yorumlar</h3>
+                    <span class="badge bg-primary rounded-pill">@Model.Comments.Count</span>
+                </div>
+                <div class="card-body">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
+                            <input type="hidden" name="postId" value="@Model.Id" />
+                            <div class="mb-3">
+                                <textarea name="Text" class="form-control" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Yorum Ekle</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-4">
+                            Yorum yapabilmek için <a asp-controller="User" asp-action="Login" class="alert-link">giriş yapmalısınız</a>.
+                        </div>
+                    }
+
+                    <div id="comments-section">
+                        @if (Model.Comments != null && Model.Comments.Any())
+                        {
+                            @foreach (var comment in Model.Comments)
+                            {
+                                <div class="card mb-3 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="card-subtitle text-muted">@comment.UserName</h6>
+                                            <small class="text-muted">@comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                                        </div>
+                                        <p class="card-text">@comment.Text</p>
+                                        @if (User.Identity.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == comment.UserId.ToString())
+                                        {
+                                            <div class="d-flex justify-content-end mt-2">
+                                                <a asp-controller="Comment" asp-action="Edit" asp-route-id="@comment.Id" class="btn btn-sm btn-outline-primary me-2">Düzenle</a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger delete-comment"
+                                                        data-id="@comment.Id" data-comment-text="@comment.Text.Substring(0, Math.Min(comment.Text.Length, 30))@(comment.Text.Length > 30 ? "..." : "")">
+                                                    Sil
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                Henüz yorum yapılmamış. İlk yorumu sen yap!
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Post Delete Confirmation Modal -->
+<div class="modal fade" id="deletePostConfirmModal" tabindex="-1" aria-labelledby="deletePostConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePostConfirmModalLabel">Yazı Silme Onayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deletePostConfirmText">Bu yazıyı silmek istediğinize emin misiniz?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirmPostDeleteBtn">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comment Delete Confirmation Modal -->
+<div class="modal fade" id="deleteCommentConfirmModal" tabindex="-1" aria-labelledby="deleteCommentConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteCommentConfirmModalLabel">Yorum Silme Onayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteCommentConfirmText">Bu yorumu silmek istediğinize emin misiniz?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form id="deleteCommentForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Post silme işlemi
+            $('.delete-post').click(function () {
+                const postId = $(this).data('id');
+                const postTitle = $(this).data('title');
+                $('#deletePostConfirmText').text(`"${postTitle}" başlıklı yazıyı silmek istediğinizden emin misiniz?`);
+                const deleteModal = new bootstrap.Modal(document.getElementById('deletePostConfirmModal'));
+                deleteModal.show();
+
+                // Silme işlemini onaylama
+                $('#confirmPostDeleteBtn').off('click').on('click', function() {
+                    $.ajax({
+                        url: `/Post/Delete/${postId}`,
+                        type: 'POST',
+                        success: function (result) {
+                            if (result.success) {
+                                window.location.href = '/Post/Index';
+                            } else {
+                                alert(result.message);
+                            }
+                        },
+                        error: function () {
+                            alert('Yazı silinirken bir hata oluştu.');
+                        }
+                    });
+                });
+            });
+
+            // Yorum silme işlemi
+            $('.delete-comment').click(function () {
+                const commentId = $(this).data('id');
+                const commentText = $(this).data('comment-text');
+                $('#deleteCommentConfirmText').text(`"${commentText}" yorumunu silmek istediğinizden emin misiniz?`);
+
+                // Form action ayarla
+                $('#deleteCommentForm').attr('action', `/Comment/Delete/${commentId}`);
+
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteCommentConfirmModal'));
+                deleteModal.show();
+            });
+        });
+    </script>
+}

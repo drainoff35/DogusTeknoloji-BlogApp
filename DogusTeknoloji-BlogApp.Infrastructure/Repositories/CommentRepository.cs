@@ -15,10 +15,5 @@ namespace DogusTeknoloji_BlogApp.Infrastructure.Repositories
         public CommentRepository(AppDbContext context) : base(context)
         {
         }
-
-        public async Task<List<Comment>> GetCommentsByPostIdAsync(int postId)
-        {
-            return await _dbSet.Where(c=>c.PostId==postId).ToListAsync();
-        }
     }
 }

@@ -10,5 +10,7 @@ namespace DogusTeknoloji_BlogApp.Core.Interfaces.Repositories
     public interface IPostRepository : IRepositoryBase<Post, int>
     {
         Task<List<Post>> GetPostsByCategoryIdAsync(int categoryId);
+        Task<Post> GetPostWithCommentsAsync(int postId);
+        Task<List<Post>> GetAllWithCategoriesAsync();
     }
 }

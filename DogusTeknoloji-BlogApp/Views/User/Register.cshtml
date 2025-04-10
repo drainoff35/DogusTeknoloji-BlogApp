@@ -1,0 +1,67 @@
+﻿@model DogusTeknoloji_BlogApp.Services.DTOs.UserDtos.CreateUserDto
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header text-center border-0 bg-white pt-4 pb-2">
+                    <h1 class="h3 text-primary">
+                        <i class="bi bi-person-plus me-2"></i>Hesap Oluştur
+                    </h1>
+                    <p class="text-muted small">Doğuş Teknoloji Blog'a katılmak için kayıt olun</p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Register" method="post" class="scale-in">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="UserName" class="form-control" placeholder="Kullanıcı Adı" autofocus />
+                            <label asp-for="UserName">Kullanıcı Adı</label>
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" type="email" placeholder="name@example.com" />
+                            <label asp-for="Email">E-posta Adresi</label>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Password" class="form-control" type="password" placeholder="Şifre" />
+                            <label asp-for="Password">Şifre</label>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-person-check me-2"></i>Kayıt Ol
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-white text-center py-3 border-0">
+                    <p class="mb-0">
+                        Zaten hesabınız var mı?
+                        <a asp-action="Login" class="fw-semibold">Giriş Yapın</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted small">
+                    <i class="bi bi-arrow-left me-1"></i> Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
