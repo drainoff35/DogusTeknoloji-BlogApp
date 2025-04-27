@@ -1,5 +1,6 @@
 ﻿using DogusTeknoloji_BlogApp.Core.Entities;
 using DogusTeknoloji_BlogApp.Core.Interfaces.Repositories;
+using DogusTeknoloji_BlogApp.Core.Interfaces.UnitOfWork;
 using DogusTeknoloji_BlogApp.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace DogusTeknoloji_BlogApp.Services.Implementations
     {
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
-        public PostService(IPostRepository postRepository, ICategoryRepository categoryRepository) : base(postRepository)
+        public PostService(IPostRepository postRepository, ICategoryRepository categoryRepository, IUnitOfWork unitOfWork) : base(postRepository, unitOfWork)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;

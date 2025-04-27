@@ -12,13 +12,10 @@ namespace DogusTeknoloji_BlogApp.Controllers
     {
         private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public CategoryController(ICategoryService categoryService, IMapper mapper, IUnitOfWork unitOfWork)
+        public CategoryController(ICategoryService categoryService, IMapper mapper)
         {
             _categoryService = categoryService;
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -45,7 +42,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
                 {
                     var category = _mapper.Map<Category>(categoryDto);
                     await _categoryService.AddAsync(category);
-                    await _unitOfWork.CommitAsync();
                     TempData["SuccessMessage"] = "Kategori başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -81,7 +77,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
                 {
                     var category = _mapper.Map<Category>(categoryDto);
                     await _categoryService.UpdateAsync(id, category);
-                    await _unitOfWork.CommitAsync();
                     TempData["SuccessMessage"] = "Kategori başarıyla güncellendi.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -105,7 +100,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
             try
             {
                 await _categoryService.DeleteAsync(id);
-                await _unitOfWork.CommitAsync();
                 return Json(new { success = true, message = "Kategori başarıyla silindi." });
             }
             catch (KeyNotFoundException)

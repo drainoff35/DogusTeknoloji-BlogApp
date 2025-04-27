@@ -16,16 +16,14 @@ namespace DogusTeknoloji_BlogApp.Controllers
         private readonly ICategoryService _categoryService;
         private readonly ICommentService _commentService;
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
 
         public PostController(IPostService postService, ICategoryService categoryService,
-            ICommentService commentService, IMapper mapper, IUnitOfWork unitOfWork)
+            ICommentService commentService, IMapper mapper)
         {
             _postService = postService;
             _categoryService = categoryService;
             _commentService = commentService;
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -87,7 +85,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
                     }
 
                     await _postService.AddAsync(post);
-                    await _unitOfWork.CommitAsync();
                     TempData["SuccessMessage"] = "Yazı başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -182,7 +179,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
                     }
 
                     await _postService.UpdateAsync(id, post);
-                    await _unitOfWork.CommitAsync();
                     TempData["SuccessMessage"] = "Post başarıyla güncellendi.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -203,7 +199,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
             try
             {
                 await _postService.DeleteAsync(id);
-                await _unitOfWork.CommitAsync();
                 return Json(new { success = true, message = "Yazı başarıyla silindi." });
             }
             catch (KeyNotFoundException)

@@ -1,5 +1,6 @@
 ﻿using DogusTeknoloji_BlogApp.Core.Entities;
 using DogusTeknoloji_BlogApp.Core.Interfaces.Repositories;
+using DogusTeknoloji_BlogApp.Core.Interfaces.UnitOfWork;
 using DogusTeknoloji_BlogApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -13,15 +14,19 @@ namespace DogusTeknoloji_BlogApp.Services.Implementations
     public class ServiceBase<TEntity, TKey> : IServiceBase<TEntity,TKey> where TEntity : BaseEntity
     {
         private readonly IRepositoryBase<TEntity, TKey> _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ServiceBase(IRepositoryBase<TEntity, TKey> repository)
+        public ServiceBase(IRepositoryBase<TEntity, TKey> repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task AddAsync(TEntity entity)
         {
             await _repository.AddAsync(entity);
+            await _unitOfWork.CommitAsync();
+
         }
 
         public async Task DeleteAsync(TKey id)
@@ -32,6 +37,7 @@ namespace DogusTeknoloji_BlogApp.Services.Implementations
                 throw new KeyNotFoundException("Silinecek nesne bulunamadı.");
             }
             await _repository.DeleteAsync(id);
+            await _unitOfWork.CommitAsync();
         }
 
         public async Task<List<TEntity>> GetAllAsync()
@@ -57,6 +63,7 @@ namespace DogusTeknoloji_BlogApp.Services.Implementations
                 throw new KeyNotFoundException("Güncellenecek nesne bulunamadı.");
             }
             await _repository.UpdateAsync(id, entity);
+            await _unitOfWork.CommitAsync();
         }
     }
 

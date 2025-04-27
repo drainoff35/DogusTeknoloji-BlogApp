@@ -14,14 +14,12 @@ namespace DogusTeknoloji_BlogApp.Controllers
         private readonly ICommentService _commentService;
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public CommentController(ICommentService commentService, IPostService postService, IMapper mapper, IUnitOfWork unitOfWork)
+        public CommentController(ICommentService commentService, IPostService postService, IMapper mapper)
         {
             _commentService = commentService;
             _postService = postService;
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
         }
 
         [HttpPost]
@@ -38,7 +36,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
                     comment.UserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                     await _commentService.AddAsync(comment);
-                    await _unitOfWork.CommitAsync();
 
                     TempData["SuccessMessage"] = "Yorumunuz başarıyla eklendi.";
                     return RedirectToAction("Details", "Post", new { id = postId });
@@ -74,7 +71,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
 
                 int postId = comment.PostId;
                 await _commentService.DeleteAsync(id);
-                await _unitOfWork.CommitAsync();
 
                 return Json(new { success = true, message = "Yorum başarıyla silindi.", postId = postId });
             }
@@ -135,7 +131,6 @@ namespace DogusTeknoloji_BlogApp.Controllers
 
                     _mapper.Map(commentDto, originalComment);
                     await _commentService.UpdateAsync(id, originalComment);
-                    await _unitOfWork.CommitAsync();
 
                     TempData["SuccessMessage"] = "Yorum başarıyla güncellendi.";
                     return RedirectToAction("Details", "Post", new { id = originalComment.PostId });
