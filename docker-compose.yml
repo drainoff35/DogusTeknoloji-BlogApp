@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  blogapp:
+    image: dogus-teknoloji-blogapp
+    container_name: blogapp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+      - "8081:443"
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=DogusTeknolojiBlogDb;User Id=sa;Password=kutay123.;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;Connection Timeout=30;
+    volumes:
+      - blogapp_data:/app/wwwroot/images
+    restart: unless-stopped
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    user: "0"
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "SA_PASSWORD=kutay123."
+      - "MSSQL_PID=Developer"
+      - "MSSQL_AGENT_ENABLED=true"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_volume:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  blogapp_data:
+  sqlserver_volume:

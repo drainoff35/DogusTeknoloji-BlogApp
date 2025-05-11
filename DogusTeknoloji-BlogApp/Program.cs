@@ -13,6 +13,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.EnvironmentName.Equals("Docker", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Configuration.AddJsonFile("appsettings.Docker.json", optional: false);
+}
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -53,7 +58,27 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+
+
 var app = builder.Build();
+
+//Auto migration 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Veritabaný migrasyonu sýrasýnda bir hata oluþtu.");
+    }
+}
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -63,7 +88,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.EnvironmentName.Equals("Docker", StringComparison.OrdinalIgnoreCase))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseRouting();
 
 app.UseAuthentication();
